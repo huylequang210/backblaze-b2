@@ -21,6 +21,7 @@ class Client
     protected $client;
     protected $reAuthTime;
     protected $authTimeoutSeconds;
+    protected $applicationKeyId;
 
     /**
      * Accepts the account ID, application key and an optional array of options.
@@ -31,10 +32,11 @@ class Client
      *
      * @throws \Exception
      */
-    public function __construct($accountId, $applicationKey, array $options = [])
+    public function __construct($accountId, $applicationKey, $applicationKeyId, array $options = [])
     {
         $this->accountId = $accountId;
         $this->applicationKey = $applicationKey;
+        $this->applicationKeyId = $applicationKeyId;
 
         $this->authTimeoutSeconds = 12 * 60 * 60; // 12 hour default
         if (isset($options['auth_timeout_seconds'])) {
@@ -428,7 +430,7 @@ class Client
         }
 
         $response = $this->client->guzzleRequest('GET', self::B2_API_BASE_URL.self::B2_API_V1.'/b2_authorize_account', [
-            'auth' => [$this->accountId, $this->applicationKey],
+            'auth' => [$this->applicationKeyId, $this->applicationKey],
         ]);
 
         $this->authToken = $response['authorizationToken'];
